@@ -112,7 +112,7 @@ const Watch = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [params, id, season, episode]);
-
+  console.log(data);
   useEffect(() => {
     if (embedMode !== undefined && embedMode !== null)
       localStorage.setItem("RiveStreamEmbedMode", embedMode);
@@ -338,9 +338,14 @@ const Watch = () => {
           id={id}
           type={type}
           data={data}
+          seasondata={seasondata}
           season={season}
           episode={episode}
-          setWatchDetails={setWatchDetails}
+          maxSeason={maxSeason}
+          maxEpisodes={maxEpisodes}
+          nextSeasonMinEpisodes={nextSeasonMinEpisodes}
+          handleForward={handleForward}
+          handleBackward={handleBackward}
         />
       )}
       <div className={styles.watchSelects}>
@@ -356,18 +361,18 @@ const Watch = () => {
               localStorage.setItem("RiveStreamLatestAgg", e.target.value);
             }}
           >
-            <option value="AGG">Aggregator : 1 (Multi-Server)</option>
+            <option value="AGG" defaultChecked>
+              Aggregator : 1 (Multi-Server)
+            </option>
             <option value="VID">Aggregator : 2 (Vidsrc)</option>
             <option value="PRO">Aggregator : 3 (Best-Server)</option>
             <option value="EMB">Aggregator : 4</option>
             <option value="MULTI">Aggregator : 5 (Fast-Server)</option>
-            <option value="SUP" defaultChecked>
-              Aggregator : 6 (Multi/Most-Server)
-            </option>
+            <option value="SUP">Aggregator : 6 (Multi/Most-Server)</option>
             <option value="CLUB">Aggregator : 7 </option>
-            <option value="SMASH">Aggregator : 8</option>
-            <option value="ONE">Aggregator : 9</option>
-            <option value="ANY">Aggregator : 10 (Multi-Server)</option>
+            <option value="ONE">Aggregator : 8</option>
+            <option value="ANY">Aggregator : 9 (Multi-Server +ads)</option>
+            <option value="SMASH">Aggregator : 10 (Multi-Server)</option>
             <option value="WEB">Aggregator : 11 (Ad-Free)</option>
           </select>
         )}
@@ -428,8 +433,8 @@ const Watch = () => {
           scrolling="no"
           src={
             type === "movie"
-              ? `${STREAM_URL_AGG}/embed/${id}`
-              : `${STREAM_URL_AGG}/embed/${id}/${season}/${episode}`
+              ? `${STREAM_URL_AGG}/movie/${id}`
+              : `${STREAM_URL_AGG}/tv/${id}/${season}/${episode}`
           }
           className={styles.iframe}
           allowFullScreen
@@ -533,8 +538,8 @@ const Watch = () => {
           scrolling="no"
           src={
             type === "movie"
-              ? `${STREAM_URL_SMASH}?tmdb=${id}`
-              : `${STREAM_URL_SMASH}?tmdb=${id}&season=${season}&episode=${episode}`
+              ? `${STREAM_URL_SMASH}/embed/tt${id}`
+              : `${STREAM_URL_SMASH}/embed/tt${id}/${season}-${episode}`
           }
           className={styles.iframe}
           allowFullScreen
